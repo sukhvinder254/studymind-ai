@@ -44,3 +44,8 @@ Development Journey
 ✅ Day 1 — Project Setup
 Today was all about setting the foundation. I started by creating the GitHub repository and cloning it locally in VS Code. Then I created two separate folders — frontend for the React app and backend for the FastAPI server. Inside the backend, I set up a Python virtual environment and installed all the required libraries including FastAPI, Uvicorn, Supabase, pdfplumber, Google Generative AI, and authentication libraries like python-jose and passlib. I also created the main.py and .env files to get the backend structure ready. Finally pushed everything to GitHub. Small start, but the foundation is solid.
 More updates coming daily as I keep building... 🚀
+ ✅ Day 2 — Supabase Setup + Backend Server Live
+
+Today was a big day. I set up the entire database on Supabase and got the backend server running for the first time. Created three PostgreSQL tables from scratch — users, pdfs, and chats — using raw SQL in the Supabase SQL Editor. Then configured the FastAPI backend with environment variables, CORS middleware, and connected it to Supabase. Wrote the base server file in main.py and tested it locally — the server responded perfectly with a 200 OK. Also added a .gitignore file to make sure sensitive files like .env never get pushed to GitHub. Small but solid progress every single day.
+
+*More updates coming daily... 🚀*
