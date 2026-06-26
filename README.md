@@ -46,6 +46,22 @@ Today was all about setting the foundation. I started by creating the GitHub rep
 More updates coming daily as I keep building... 🚀
  ✅ Day 2 — Supabase Setup + Backend Server Live
 
-Today was a big day. I set up the entire database on Supabase and got the backend server running for the first time. Created three PostgreSQL tables from scratch — users, pdfs, and chats — using raw SQL in the Supabase SQL Editor. Then configured the FastAPI backend with environment variables, CORS middleware, and connected it to Supabase. Wrote the base server file in main.py and tested it locally — the server responded perfectly with a 200 OK. Also added a .gitignore file to make sure sensitive files like .env never get pushed to GitHub. Small but solid progress every single day.
+Today was a big day. I set up the entire database on Supabase and got the backend server running for the first time. Created three PostgreSQL tables from scratch — users, pdfs, and chats — using raw SQL in the Supabase
+ SQL Editor. Then configured the FastAPI backend with environment variables, CORS middleware, and connected it to Supabase. Wrote the base server file in main.py and tested it locally — the server responded perfectly with a 200 OK. Also added a .gitignore file to make sure sensitive files like .env never get pushed to GitHub. Small but solid progress every single day.
+
+*More updates coming daily... 🚀*
+✅ Day 3 — Auth API with Signup & Login
+
+Today I built the complete authentication system for the backend. Created a routes folder inside backend and wrote auth.py with two API endpoints — POST /auth/signup and POST /auth/login. The signup endpoint checks if the email already exists in the database, hashes the password securely using bcrypt, and saves the user to Supabase. The login endpoint verifies the email and password, then returns a JWT token for secure sessions.
+
+**Errors I faced and how I solved them:**
+
+The first error was `SupabaseException: Invalid URL` — I had accidentally pasted the dashboard URL instead of the actual project URL in my .env file. Fixed it by using the correct `https://xftztahwrptoyhwdsevj.supabase.co` format.
+
+The second error was `bcrypt: no backends available` — passlib was not finding bcrypt properly. I uninstalled passlib and reinstalled it with `pip install passlib[bcrypt]`, but the issue persisted. Finally switched to using the bcrypt library directly instead of passlib, which fixed it completely.
+
+The third error was `ValueError: password cannot be longer than 72 bytes` — bcrypt has a 72 character limit. Fixed by truncating the password with `data.password[:72]` before hashing.
+
+After fixing all three errors, tested the signup API on Swagger UI at `/docs` and got a `200 OK` response with `Signup successful!`. Checked Supabase Table Editor and saw the user saved in the database with a properly hashed password — that moment felt really satisfying.
 
 *More updates coming daily... 🚀*
