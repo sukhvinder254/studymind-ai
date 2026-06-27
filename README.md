@@ -65,3 +65,24 @@ The third error was `ValueError: password cannot be longer than 72 bytes` — bc
 After fixing all three errors, tested the signup API on Swagger UI at `/docs` and got a `200 OK` response with `Signup successful!`. Checked Supabase Table Editor and saw the user saved in the database with a properly hashed password — that moment felt really satisfying.
 
 *More updates coming daily... 🚀*
+ ✅ Day 4 — PDF Upload + Gemini AI Chat API
+
+Today was the most exciting day so far — I integrated Google Gemini AI into the backend. Created two new route files — pdf.py and chat.py inside the routes folder.
+
+The PDF upload endpoint reads the uploaded file, extracts all the text from every page using pdfplumber, and saves both the filename and the extracted text into the Supabase pdfs table. This text is what the AI will later use to answer questions.
+
+The chat endpoint takes the user's question, fetches the relevant PDF text from the database, builds a prompt combining both the PDF content and the question, sends it to Google Gemini 1.5 Flash, and returns the AI's response. Every conversation is also saved in the chats table so history is maintained.
+
+Also updated main.py to include all three routers — auth, pdf, and chat — so the entire backend is now connected and running as one unified API server.
+
+Tested on Swagger UI at /docs and all 6 endpoints are showing up and working perfectly:
+- POST /auth/signup
+- POST /auth/login
+- POST /pdf/upload
+- GET /pdf/list
+- POST /chat/message
+- GET /
+
+The backend is now fully functional. Next up — building the React frontend!
+
+*More updates coming daily... 🚀*
