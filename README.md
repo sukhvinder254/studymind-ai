@@ -86,3 +86,26 @@ Tested on Swagger UI at /docs and all 6 endpoints are showing up and working per
 The backend is now fully functional. Next up — building the React frontend!
 
 *More updates coming daily... 🚀*
+ ✅ Day 5 — React Frontend + Full Stack Integration
+
+Today was the most challenging and rewarding day so far. I built the entire React frontend from scratch and connected it to the backend — making the app fully functional end to end.
+
+**What I built:**
+
+Set up React with Vite and configured Tailwind CSS for styling. Created four main pages — Login, Signup, Dashboard, and Chat. For the design, I went with a deep dark theme with glassmorphism cards, purple-to-blue gradient accents, smooth hover animations, and floating background blobs. The goal was to make it feel like a real SaaS product. Also set up React Router for navigation and Axios for API calls.
+
+**Bugs I fixed:**
+
+The first issue was a CORS error — the frontend couldn't talk to the backend. Fixed it by restarting the backend server with the correct host configuration.
+
+The second issue was that the user_id was not being passed correctly to the PDF upload API. The localStorage was storing the user's name instead of their UUID. Fixed it by updating the login API response to return the user's id and storing it separately in localStorage.
+
+The third issue was the Gemini model name — `gemini-1.5-flash` was deprecated. I ran a script to list all available models and switched to `gemini-2.5-flash` which worked perfectly.
+
+The fourth issue was with git push — GitHub kept rejecting the push due to repository rule violations. After trying many approaches, I uploaded the files directly through the GitHub web interface to make sure all the code was saved.
+
+**The moment it worked:**
+
+When I uploaded a PDF and asked the AI a question about it — and it gave a detailed, accurate answer — that was genuinely one of the most satisfying moments of this whole project. The entire stack was working together — React frontend, FastAPI backend, Supabase database, and Google Gemini AI.
+
+*More updates coming daily... 🚀*
