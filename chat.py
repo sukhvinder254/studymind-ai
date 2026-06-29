@@ -38,3 +38,19 @@ def chat(data: ChatRequest):
         "response": response.text
     }).execute()
     return {"response": response.text}
+class SummaryRequest(BaseModel):
+    pdf_id: str
+
+@router.post("/summary")
+def get_summary(data: SummaryRequest):
+    pdf = supabase.table("pdfs").select("*").eq("id", data.pdf_id).execute()
+    if not pdf.data:
+        return {"error": "PDF not found"}
+    pdf_text = pdf.data[0]["pdf_text"]
+    prompt = f"""
+    Give a clear and concise summary of this PDF in 5-6 bullet points.
+    Make it easy to understand for a student.
+    PDF Content: {pdf_text[:3000]}
+    """
+    response = model.generate_content(prompt)
+    return {"summary": response.text}

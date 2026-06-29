@@ -28,3 +28,8 @@ async def upload_pdf(file: UploadFile = File(...), user_id: str = Form(...)):
 def list_pdfs(user_id: str):
     result = supabase.table("pdfs").select("*").eq("user_id", user_id).execute()
     return result.data
+@router.delete("/delete/{pdf_id}")
+def delete_pdf(pdf_id: str):
+    supabase.table("chats").delete().eq("pdf_id", pdf_id).execute()
+    supabase.table("pdfs").delete().eq("id", pdf_id).execute()
+    return {"message": "PDF deleted!"}

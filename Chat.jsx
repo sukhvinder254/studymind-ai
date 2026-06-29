@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { sendMessage } from "../services/api"
+import { sendMessage, getSummary } from "../services/api"
 
 export default function Chat() {
   const { pdfId } = useParams()
@@ -8,6 +8,9 @@ export default function Chat() {
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
+  const [summary, setSummary] = useState("")
+  const [showSummary, setShowSummary] = useState(false)
+  const [summaryLoading, setSummaryLoading] = useState(false)
   const messagesEndRef = useRef(null)
   const userId = localStorage.getItem("userId")
 
@@ -30,28 +33,61 @@ export default function Chat() {
     setLoading(false)
   }
 
+  const handleSummary = async () => {
+    setSummaryLoading(true)
+    setShowSummary(true)
+    try {
+      const res = await getSummary(pdfId)
+      setSummary(res.data.summary)
+    } catch (e) {
+      setSummary("Could not generate summary.")
+    }
+    setSummaryLoading(false)
+  }
+
   return (
     <div style={{height:"100vh", display:"flex", flexDirection:"column", background:"linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%)"}}>
 
-      {/* Background blobs */}
       <div style={{position:"fixed", top:"10%", left:"5%", width:"400px", height:"400px", background:"rgba(124,58,237,0.08)", borderRadius:"50%", filter:"blur(100px)", pointerEvents:"none"}}></div>
       <div style={{position:"fixed", bottom:"10%", right:"5%", width:"300px", height:"300px", background:"rgba(37,99,235,0.08)", borderRadius:"50%", filter:"blur(100px)", pointerEvents:"none"}}></div>
 
-      {/* Navbar */}
+      {showSummary && (
+        <div style={{position:"fixed", top:0, left:0, right:0, bottom:0, background:"rgba(0,0,0,0.7)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center", padding:"24px"}}>
+          <div style={{background:"#1a1a2e", border:"1px solid rgba(255,255,255,0.1)", borderRadius:"20px", padding:"32px", maxWidth:"600px", width:"100%", maxHeight:"80vh", overflowY:"auto"}}>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"20px"}}>
+              <h2 style={{color:"white", margin:0, fontSize:"22px"}}>📝 PDF Summary</h2>
+              <button onClick={() => setShowSummary(false)} style={{background:"none", border:"none", color:"white", fontSize:"20px", cursor:"pointer"}}>✕</button>
+            </div>
+            {summaryLoading ? (
+              <p style={{color:"rgba(255,255,255,0.5)"}}>Generating summary...</p>
+            ) : (
+              <p style={{color:"rgba(255,255,255,0.8)", lineHeight:"1.8", whiteSpace:"pre-wrap"}}>{summary}</p>
+            )}
+          </div>
+        </div>
+      )}
+
       <nav style={{background:"rgba(255,255,255,0.03)", backdropFilter:"blur(20px)", borderBottom:"1px solid rgba(255,255,255,0.08)", padding:"16px 32px", display:"flex", justifyContent:"space-between", alignItems:"center", flexShrink:0}}>
         <div style={{display:"flex", alignItems:"center", gap:"12px"}}>
           <div style={{width:"36px", height:"36px", background:"linear-gradient(135deg, #7c3aed, #2563eb)", borderRadius:"10px", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"18px"}}>🧠</div>
           <span style={{color:"white", fontSize:"20px", fontWeight:"700"}}>StudyMind AI</span>
         </div>
-        <button
-          onClick={() => navigate("/dashboard")}
-          style={{background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:"10px", padding:"8px 16px", color:"rgba(255,255,255,0.7)", cursor:"pointer", fontSize:"14px", transition:"all 0.3s"}}
-          onMouseEnter={(e) => e.target.style.background="rgba(255,255,255,0.12)"}
-          onMouseLeave={(e) => e.target.style.background="rgba(255,255,255,0.07)"}
-        >← Back</button>
+        <div style={{display:"flex", gap:"8px"}}>
+          <button
+            onClick={() => navigate("/dashboard")}
+            style={{background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:"10px", padding:"8px 16px", color:"rgba(255,255,255,0.7)", cursor:"pointer", fontSize:"14px"}}
+          >← Back</button>
+          <button
+            onClick={handleSummary}
+            style={{background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:"10px", padding:"8px 16px", color:"rgba(255,255,255,0.7)", cursor:"pointer", fontSize:"14px"}}
+          >📝 Summary</button>
+          <button
+            onClick={() => navigate(`/quiz/${pdfId}`)}
+            style={{background:"linear-gradient(135deg, #7c3aed, #2563eb)", border:"none", borderRadius:"10px", padding:"8px 16px", color:"white", cursor:"pointer", fontSize:"14px", fontWeight:"600"}}
+          >🧠 Take Quiz</button>
+        </div>
       </nav>
 
-      {/* Messages */}
       <div style={{flex:1, overflowY:"auto", padding:"32px 24px", maxWidth:"800px", width:"100%", margin:"0 auto"}}>
         {messages.length === 0 && (
           <div style={{textAlign:"center", paddingTop:"80px"}}>
@@ -94,7 +130,6 @@ export default function Chat() {
         <div ref={messagesEndRef}></div>
       </div>
 
-      {/* Input */}
       <div style={{background:"rgba(255,255,255,0.03)", backdropFilter:"blur(20px)", borderTop:"1px solid rgba(255,255,255,0.08)", padding:"20px 24px", flexShrink:0}}>
         <div style={{maxWidth:"800px", margin:"0 auto", display:"flex", gap:"12px"}}>
           <input
@@ -110,8 +145,6 @@ export default function Chat() {
             onClick={handleSend}
             disabled={loading}
             style={{background:"linear-gradient(135deg, #7c3aed, #2563eb)", border:"none", borderRadius:"14px", padding:"14px 24px", color:"white", fontSize:"20px", cursor: loading ? "not-allowed" : "pointer", transition:"all 0.3s", boxShadow:"0 8px 32px rgba(124,58,237,0.3)"}}
-            onMouseEnter={(e) => !loading && (e.target.style.transform="translateY(-2px)", e.target.style.boxShadow="0 12px 40px rgba(124,58,237,0.5)")}
-            onMouseLeave={(e) => (e.target.style.transform="translateY(0)", e.target.style.boxShadow="0 8px 32px rgba(124,58,237,0.3)")}
           >→</button>
         </div>
       </div>

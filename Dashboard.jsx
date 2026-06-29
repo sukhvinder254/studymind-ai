@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { uploadPDF, listPDFs } from "../services/api"
+import { uploadPDF, listPDFs, deletePDF } from "../services/api"
 
 export default function Dashboard() {
   const [pdfs, setPdfs] = useState([])
@@ -28,7 +28,6 @@ export default function Dashboard() {
     setUploading(true)
     const formData = new FormData()
     formData.append("file", file)
-    console.log("userID:", userId)
     formData.append("user_id", userId)
     try {
       await uploadPDF(formData)
@@ -37,6 +36,13 @@ export default function Dashboard() {
       console.log(e)
     }
     setUploading(false)
+  }
+
+  const handleDelete = async (pdfId) => {
+    if (window.confirm("Delete this PDF?")) {
+      await deletePDF(pdfId)
+      await fetchPDFs()
+    }
   }
 
   return (
@@ -93,16 +99,26 @@ export default function Dashboard() {
             {pdfs.map((pdf) => (
               <div
                 key={pdf.id}
-                onClick={() => navigate(`/chat/${pdf.id}`)}
-                style={{background:"rgba(255,255,255,0.05)", backdropFilter:"blur(10px)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:"16px", padding:"24px", cursor:"pointer", transition:"all 0.3s"}}
+                style={{background:"rgba(255,255,255,0.05)", backdropFilter:"blur(10px)", border:"1px solid rgba(255,255,255,0.08)", borderRadius:"16px", padding:"24px", transition:"all 0.3s"}}
                 onMouseEnter={(e) => { e.currentTarget.style.transform="translateY(-4px)"; e.currentTarget.style.border="1px solid rgba(124,58,237,0.4)"; e.currentTarget.style.boxShadow="0 20px 40px rgba(0,0,0,0.3)" }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.border="1px solid rgba(255,255,255,0.08)"; e.currentTarget.style.boxShadow="none" }}
               >
                 <div style={{fontSize:"32px", marginBottom:"12px"}}>📑</div>
                 <p style={{color:"white", fontWeight:"600", margin:"0 0 8px", fontSize:"15px"}}>{pdf.filename}</p>
-                <p style={{color:"rgba(255,255,255,0.4)", fontSize:"12px", margin:0}}>{new Date(pdf.uploaded_at).toLocaleDateString()}</p>
-                <div style={{marginTop:"16px", background:"linear-gradient(135deg, #7c3aed, #2563eb)", borderRadius:"8px", padding:"8px 14px", display:"inline-block"}}>
-                  <span style={{color:"white", fontSize:"13px", fontWeight:"600"}}>Chat with AI →</span>
+                <p style={{color:"rgba(255,255,255,0.4)", fontSize:"12px", margin:"0 0 16px"}}>{new Date(pdf.uploaded_at).toLocaleDateString()}</p>
+                <div style={{display:"flex", gap:"8px"}}>
+                  <div
+                    onClick={() => navigate(`/chat/${pdf.id}`)}
+                    style={{flex:1, background:"linear-gradient(135deg, #7c3aed, #2563eb)", borderRadius:"8px", padding:"8px 14px", cursor:"pointer", textAlign:"center"}}
+                  >
+                    <span style={{color:"white", fontSize:"13px", fontWeight:"600"}}>Chat with AI →</span>
+                  </div>
+                  <div
+                    onClick={(e) => { e.stopPropagation(); handleDelete(pdf.id) }}
+                    style={{background:"rgba(239,68,68,0.15)", border:"1px solid rgba(239,68,68,0.3)", borderRadius:"8px", padding:"8px 12px", cursor:"pointer"}}
+                  >
+                    <span style={{color:"#f87171", fontSize:"13px"}}>🗑️</span>
+                  </div>
                 </div>
               </div>
             ))}
