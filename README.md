@@ -109,3 +109,16 @@ The fourth issue was with git push — GitHub kept rejecting the push due to rep
 When I uploaded a PDF and asked the AI a question about it — and it gave a detailed, accurate answer — that was genuinely one of the most satisfying moments of this whole project. The entire stack was working together — React frontend, FastAPI backend, Supabase database, and Google Gemini AI.
 
 *More updates coming daily... 🚀*
+ ✅ Day 6 — Quiz Generator, PDF Delete & Summary Feature
+
+Today I added three major features to make the app more useful for actual studying, not just chatting.
+
+**Quiz Generator:** Built a new API endpoint that takes the PDF content and asks Gemini AI to generate 5 multiple choice questions in JSON format. On the frontend, built an interactive quiz UI where users select answers, submit, and instantly see which ones were correct or wrong with color-coded feedback, along with a final score. Had to fix the prompt a few times since the AI was returning inconsistent option formats — refining the prompt to demand full-sentence options and exact-match answers fixed it completely.
+
+**PDF Delete:** Added a delete button on each PDF card in the dashboard. Ran into a foreign key constraint error since chats were linked to PDFs — fixed it by deleting related chat records first before deleting the PDF itself.
+
+**PDF Summary:** Added a one-click summary feature in the chat page. It sends the PDF content to Gemini and asks for a clean bullet-point summary, displayed in a nice modal popup — great for quickly reviewing a document before diving into questions.
+
+The app now feels like a genuinely useful study tool — upload notes, get a summary, ask questions, and test yourself with a quiz, all in one place.
+
+*More updates coming daily... 🚀*
