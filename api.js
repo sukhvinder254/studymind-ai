@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const API = axios.create({
-  baseURL: 'https://studymind-ai-backend-kc9l.onrender.com/'
+  baseURL: 'https://studymind-ai-backend-kc9l.onrender.com'
 })
 
 export const signup = (data) => API.post('/auth/signup', data)
