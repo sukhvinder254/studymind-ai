@@ -7,16 +7,26 @@ export default function Dashboard() {
   const [uploading, setUploading] = useState(false)
   const [dragOver, setDragOver] = useState(false)
   const navigate = useNavigate()
+
+  // Humne variables ko state mein daal diya taaki jab bhi component render ho, fresh ID mile
   const userId = localStorage.getItem("userId")
   const userName = localStorage.getItem("userName")
 
   useEffect(() => {
+    // Agar login nahi hai ya ID undefined hai, toh wapas login par bhej do
+    if (!userId || userId === "undefined") {
+      navigate("/")
+      return
+    }
     fetchPDFs()
-  }, [])
+  }, [userId]) // userId badalne par ye fir se chalega
 
   const fetchPDFs = async () => {
+    const currentUserId = localStorage.getItem("userId")
+    if (!currentUserId || currentUserId === "undefined") return
+    
     try {
-      const res = await listPDFs(userId)
+      const res = await listPDFs(currentUserId)
       setPdfs(res.data)
     } catch (e) {
       console.log(e)
@@ -25,10 +35,17 @@ export default function Dashboard() {
 
   const handleUpload = async (file) => {
     if (!file) return
+    const currentUserId = localStorage.getItem("userId")
+    if (!currentUserId || currentUserId === "undefined") {
+      alert("Session expired, please login again.")
+      navigate("/")
+      return
+    }
+
     setUploading(true)
     const formData = new FormData()
     formData.append("file", file)
-    formData.append("user_id", userId)
+    formData.append("user_id", currentUserId) // Yahan fresh local storage se ID ja rahi hai
     try {
       await uploadPDF(formData)
       await fetchPDFs()
