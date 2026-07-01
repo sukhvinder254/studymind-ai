@@ -13,7 +13,10 @@ export default function Login() {
     try {
       const res = await login(form)
       localStorage.setItem("token", res.data.token)
-      localStorage.setItem("userId", res.data.id)
+      
+      // Yahan res.data.id ko badalkar res.data.user_id kar diya hai taaki undefined na aaye
+      localStorage.setItem("userId", res.data.user_id)
+      
       localStorage.setItem("userName", res.data.name)
       navigate("/dashboard")
     } catch (e) {
