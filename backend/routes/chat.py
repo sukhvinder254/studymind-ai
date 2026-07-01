@@ -22,9 +22,9 @@ def chat(data: ChatRequest):
     pdf = supabase.table("pdfs").select("*").eq("id", data.pdf_id).execute()
     if not pdf.data:
         return {"error": "PDF not found"}
-    pdf_text = pdf.data[0]["pdf_text"]
+    pdf_text = pdf.data[0]["pdf_text"][:1000]
     prompt = f"""
-    PDF Content: {pdf_text[:3000]}
+    PDF Content: {pdf_text[:1000]}
     
     User Question: {data.message}
     
