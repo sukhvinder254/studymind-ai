@@ -15,7 +15,7 @@ export default function Login() {
       localStorage.setItem("token", res.data.token)
       
       // Yahan res.data.id ko badalkar res.data.user_id kar diya hai taaki undefined na aaye
-      localStorage.setItem("userId", res.data.user_id)
+      localStorage.setItem("userId", res.data.id)
       
       localStorage.setItem("userName", res.data.name)
       navigate("/dashboard")
