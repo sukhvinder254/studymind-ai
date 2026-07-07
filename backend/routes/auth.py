@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 router = APIRouter()
-
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 SECRET_KEY = os.getenv("SECRET_KEY")
 
@@ -43,4 +42,8 @@ def login(data: LoginRequest):
     if not bcrypt.checkpw(data.password.encode('utf-8'), user.data[0]["password"].encode('utf-8')):
         raise HTTPException(status_code=400, detail="Wrong password")
     token = jwt.encode({"id": user.data[0]["id"], "email": data.email}, SECRET_KEY)
-    return {"token": token, "name": user.data[0]["name"]}
+    return {
+        "token": token,
+        "name": user.data[0]["name"],
+        "id": user.data[0]["id"]
+    }

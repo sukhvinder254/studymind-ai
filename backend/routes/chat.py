@@ -10,7 +10,7 @@ load_dotenv()
 router = APIRouter()
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 class ChatRequest(BaseModel):
     user_id: str
@@ -22,9 +22,9 @@ def chat(data: ChatRequest):
     pdf = supabase.table("pdfs").select("*").eq("id", data.pdf_id).execute()
     if not pdf.data:
         return {"error": "PDF not found"}
-    pdf_text = pdf.data[0]["pdf_text"][:1000]
+    pdf_text = pdf.data[0]["pdf_text"]
     prompt = f"""
-    PDF Content: {pdf_text[:1000]}
+    PDF Content: {pdf_text[:3000]}
     
     User Question: {data.message}
     
@@ -38,3 +38,19 @@ def chat(data: ChatRequest):
         "response": response.text
     }).execute()
     return {"response": response.text}
+class SummaryRequest(BaseModel):
+    pdf_id: str
+
+@router.post("/summary")
+def get_summary(data: SummaryRequest):
+    pdf = supabase.table("pdfs").select("*").eq("id", data.pdf_id).execute()
+    if not pdf.data:
+        return {"error": "PDF not found"}
+    pdf_text = pdf.data[0]["pdf_text"]
+    prompt = f"""
+    Give a clear and concise summary of this PDF in 5-6 bullet points.
+    Make it easy to understand for a student.
+    PDF Content: {pdf_text[:3000]}
+    """
+    response = model.generate_content(prompt)
+    return {"summary": response.text}
